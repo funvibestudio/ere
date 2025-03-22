@@ -119,7 +119,103 @@
     font-size: 0.7rem; /* Taille de la police plus petite */
     padding: 0; /* Retirer le padding pour mieux contrôler la taille */
     border-radius: 50%; /* Rendre le bouton circulaire */
+    background-color: #FF6A00;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 1000; /* Assurez-vous qu'il est au-dessus des autres éléments */
 }
+
+#btn-reset:hover {
+    background-color: #FF4C00;
+    transform: scale(1.05);
+}
+
+#btn-reset:active {
+    transform: scale(1.02);
+}
+
+@media (max-width: 750px) {
+    #btn-reset {
+        bottom: 15px;
+        right: 15px;
+        width: 40px; /* Plus petit sur mobile */
+        height: 40px; /* Assurer que le bouton reste circulaire */
+        font-size: 0.7rem; /* Garder la petite taille de la police */
+    }
+}
+
+.tuto-popup {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid #FF6A00;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-width: 300px;
+    font-size: 1rem;
+    text-align: center;
+    transform: translate(-50%, -100%);
+}
+
+.tuto-popup p {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.tuto-popup button {
+    background-color: #FF6A00;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tuto-popup button:hover {
+    background-color: #FF4C00;
+    transform: scale(1.05);
+}
+
+.tuto-popup button:active {
+    transform: scale(1.02);
+}
+
+.tuto-popup .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    color: #FF6A00;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.tuto-popup .close-btn:hover {
+    color: #FF4C00;
+}
+
+.highlight {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #007BFF; /* Couleur bleue pour la mise en évidence */
+    }
+    50% {
+        background-color: #28A745; /* Couleur verte pour la mise en évidence */
+    }
+    100% {
+        background-color: #007BFF; /* Couleur bleue pour la mise en évidence */
+    }
+}
+
+
 
 @media (max-width: 750px) {
     #btn-reset {
@@ -260,6 +356,64 @@ function resetEverything() {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    if (!localStorage.getItem("tutoVu")) {
+        lancerTuto();
+        localStorage.setItem("tutoVu", "true");
+    }
+});
+function lancerTuto() {
+    const etapes = [
+        { element: "#btn-defi", texte: "Clique ici pour générer un défi du jour !" },
+        { element: "#btn-accepter", texte: "Accepte le défi si tu veux le relever !" },
+        { element: "#btn-reussi", texte: "Si tu réussis, clique ici !" },
+        { element: "#btn-non-reussi", texte: "Sinon, clique ici pour l'enregistrer comme non réussi." },
+        { element: "#btn-reset", texte: "Ce bouton est réservé aux développeurs !", position: 'left' }
+    ];
+
+    let index = 0;
+    afficherPopUp();
+
+    function afficherPopUp() {
+        if (index >= etapes.length) return;
+
+        const etape = etapes[index];
+        const element = document.querySelector(etape.element);
+        if (!element) return;
+
+        // Mettre en évidence l'élément
+        element.classList.add('highlight');
+
+        const popUp = document.createElement("div");
+        popUp.classList.add("tuto-popup");
+        popUp.innerHTML = `
+            <p>${etape.texte}</p>
+            <button onclick="fermerPopUp()">Suivant</button>
+        `;
+
+        document.body.appendChild(popUp);
+
+        const rect = element.getBoundingClientRect();
+        if (etape.position === 'left') {
+            popUp.style.top = `${rect.top + window.scrollY}px`;
+            popUp.style.left = `${rect.left + window.scrollX - popUp.offsetWidth - -180}px`; // Ajusté pour ne pas être trop à gauche
+        } else {
+            popUp.style.top = `${rect.top + window.scrollY - 60}px`;
+            popUp.style.left = `${rect.left + window.scrollX + (rect.width / 2)}px`;
+        }
+    }
+
+    window.fermerPopUp = function () {
+        const currentElement = document.querySelector(etapes[index].element);
+        if (currentElement) {
+            currentElement.classList.remove('highlight');
+        }
+        document.querySelector(".tuto-popup").remove();
+        index++;
+        afficherPopUp();
+    };
+}
+
 
 
         // Liste des défis
@@ -368,15 +522,50 @@ function mettreAJourHistorique(estReussi) {
     alert(`Défi "${defiDuJour}" marqué comme ${statut}`);
 }
 
-// Fonction pour afficher l'historique
 function afficherHistorique() {
     const historique = JSON.parse(localStorage.getItem('historique')) || [];
-    let historiqueHtml = "<h3>Historique des Défis</h3>";
+    let historiqueHtml = `
+        <h3>Historique des Défis</h3>
+        <button class="btn btn-secondary" onclick="retourAuxDefis()">Retour</button>
+    `;
     historique.forEach(item => {
         historiqueHtml += `<div class="challenge-item"><span>${item.defi}</span><span>${item.statut}</span></div>`;
     });
     document.getElementById('defi-container').innerHTML = historiqueHtml;
 }
+
+function retourAuxDefis() {
+    const defiDuJour = localStorage.getItem('defiDuJour');
+    const defiAccepte = localStorage.getItem('defiDuJourAccepte');
+    document.getElementById('defi-container').innerHTML = `
+        <h3>Défi du Jour</h3>
+        <p id="defi-text">${defiAccepte || defiDuJour || "Clique sur 'Défi du jour' pour commencer !"}</p>
+        <div>
+            <button id="btn-accepter" class="btn" onclick="accepterDefi()">Accepter le défi</button>
+            <button id="btn-reussi" class="btn" onclick="mettreAJourHistorique(true)" ${defiAccepte ? '' : 'disabled'}>Réussi</button>
+            <button id="btn-non-reussi" class="btn btn-secondary" onclick="mettreAJourHistorique(false)" ${defiAccepte ? '' : 'disabled'}>Non Réussi</button>
+        </div>
+    `;
+    if (defiAccepte) {
+        document.getElementById('btn-accepter').disabled = true;
+        document.getElementById('btn-reussi').disabled = false;
+        document.getElementById('btn-non-reussi').disabled = false;
+    } else {
+        document.getElementById('btn-accepter').disabled = false;
+        document.getElementById('btn-reussi').disabled = true;
+        document.getElementById('btn-non-reussi').disabled = true;
+    }
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (!localStorage.getItem("tutoVu")) {
+        lancerTuto();
+        localStorage.setItem("tutoVu", "true");
+    }
+});
+
+
     </script>
 
 </body>
