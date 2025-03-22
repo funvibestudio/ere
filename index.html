@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Défis Espagnols</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, rgba(255, 72, 89, 0.9), rgba(255, 180, 85, 0.8));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #FF6A00;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 45%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #FF4C00;
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background-color: #FFAF00;
+        }
+
+        .btn-secondary:hover {
+            background-color: #FF8C00;
+        }
+
+        .challenge-history {
+            background-color: #FFF1D3;
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-history h3 {
+            font-size: 1.5rem;
+            color: #FF6A00;
+        }
+
+        .challenge-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #FFEB99;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .challenge-item span {
+            font-weight: bold;
+        }
+        #btn-reset {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    opacity: 0.9;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+    width: 50px; /* Plus petit que précédemment */
+    height: 50px; /* Ajuste également la hauteur pour que ce soit un bouton circulaire */
+    font-size: 0.7rem; /* Taille de la police plus petite */
+    padding: 0; /* Retirer le padding pour mieux contrôler la taille */
+    border-radius: 50%; /* Rendre le bouton circulaire */
+}
+
+@media (max-width: 750px) {
+    #btn-reset {
+        bottom: 15px;
+        right: 15px;
+        width: 40px; /* Plus petit sur mobile */
+        height: 40px; /* Assurer que le bouton reste circulaire */
+        font-size: 0.7rem; /* Garder la petite taille de la police */
+    }
+}
+
+        /* Adaptation pour mobile */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn {
+                font-size: 1rem;
+                padding: 12px 25px;
+                width: 45%;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .challenge-history {
+                padding: 15px;
+            }
+        }
+
+        /* Pour les iPhones (portrait) */
+        @media (max-width: 750px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .btn {
+                font-size: 0.95rem;
+                padding: 10px 20px;
+                width: 100%;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .challenge-history {
+                padding: 10px;
+            }
+
+            .challenge-item {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+        }
+
+        /* Pour les petits écrans Android / Redmi */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px 18px;
+                width: 100%;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .challenge-history {
+                padding: 8px;
+            }
+
+            .challenge-item {
+                font-size: 0.85rem;
+                padding: 7px;
+            }
+        }
+  
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="container">
+        <h1>Défis du Voyage</h1>
+
+        <div class="btn-container">
+            <button id="btn-defi" class="btn" onclick="nouveauDefi()">Défi du jour</button>
+            <button class="btn btn-secondary" onclick="afficherHistorique()">Historique</button>
+        </div>
+
+        <!-- Section Défi -->
+        <div id="defi-container" class="challenge-history">
+            <h3>Défi du Jour</h3>
+            <p id="defi-text">Clique sur "Défi du jour" pour commencer !</p>
+            <div>
+                <button id="btn-accepter" class="btn" onclick="accepterDefi()">Accepter le défi</button>
+                <button id="btn-reussi" class="btn" onclick="mettreAJourHistorique(true)" disabled>Réussi</button>
+                <button id="btn-non-reussi" class="btn btn-secondary" onclick="mettreAJourHistorique(false)" disabled>Non Réussi</button>
+            </div>
+        </div>
+    </div>
+    <button id="btn-reset" class="btn" onclick="resetEverything()">ADMIN</button>
+
+
+
+    <script>
+
+function resetEverything() {
+    const password = prompt("Entrez le mot de passe pour réinitialiser : (uniquement pur les développeurs)");
+    if (password === 'iFlyA380!') { // Remplacez 'test123' par le mot de passe que vous souhaitez
+        localStorage.clear();
+        alert("Tout a été réinitialisé !");
+        window.location.reload(); // Recharger la page après réinitialisation
+    } else {
+        alert("Mot de passe incorrect !");
+    }
+}
+
+
+
+        // Liste des défis
+        const defis = [
+            "Faire répéter 4 fois la même chose à quelqu'un sans qu'il s'en aperçoive.",
+            "Faire sourire une personne inconnue dans la rue.",
+            "Mimer un animal pendant 1 minute et voir si quelqu'un devine lequel.",
+            "Demander à un inconnu de te raconter une blague.",
+            "Prendre une photo d'un détail étrange et le partager avec un ami."
+        ];
+
+// Fonction pour récupérer un défi aléatoire
+function choisirDefi() {
+    const randomIndex = Math.floor(Math.random() * defis.length);
+    return defis[randomIndex];
+}
+
+// Fonction pour afficher un nouveau défi et le stocker dans localStorage
+function nouveauDefi() {
+    const defiDuJour = choisirDefi();
+    localStorage.setItem('defiDuJour', defiDuJour);
+    document.getElementById('defi-text').innerText = defiDuJour;
+    document.getElementById('btn-accepter').disabled = false;
+    document.getElementById('btn-defi').disabled = true; // Désactive le bouton "Défi du jour"
+}
+
+// Vérifier si un défi a déjà été accepté
+function verifierDefi() {
+    const defiDuJour = localStorage.getItem('defiDuJour');
+    const defiAccepte = localStorage.getItem('defiDuJourAccepte');
+    const heureAcceptation = localStorage.getItem('heureAcceptation');
+
+    if (defiAccepte) {
+        const now = new Date().getTime();
+        const minuit = new Date(new Date().setHours(24, 0, 0, 0)).getTime();
+        
+        // Si l'heure d'acceptation est avant minuit, on garde le défi
+        if (now < minuit) {
+            document.getElementById('defi-text').innerText = defiAccepte;
+            document.getElementById('btn-accepter').disabled = true;
+            document.getElementById('btn-reussi').disabled = false;
+            document.getElementById('btn-non-reussi').disabled = false;
+        } else {
+            // Si minuit est passé, réinitialiser le défi
+            localStorage.removeItem('defiDuJourAccepte');
+            localStorage.removeItem('heureAcceptation');
+            document.getElementById('defi-text').innerText = "Clique sur 'Défi du jour' pour commencer !";
+            document.getElementById('btn-defi').disabled = false;
+        }
+    } else {
+        // Si aucun défi n'a été accepté, afficher le défi du jour
+        document.getElementById('defi-text').innerText = defiDuJour || "Clique sur 'Défi du jour' pour commencer !";
+        document.getElementById('btn-defi').disabled = false;
+    }
+}
+
+// Appel initial de la fonction pour vérifier l'état du défi
+window.onload = function() {
+    verifierDefi();
+};
+
+// Fonction pour accepter le défi
+function accepterDefi() {
+    const defiDuJour = localStorage.getItem('defiDuJour');
+    localStorage.setItem('defiDuJourAccepte', defiDuJour);
+    
+    // Stocker l'heure d'acceptation du défi
+    const heureActuelle = new Date().getTime();
+    localStorage.setItem('heureAcceptation', heureActuelle);
+    
+    // Désactiver le bouton "Accepter le défi"
+    document.getElementById('btn-accepter').disabled = true;
+    document.getElementById('btn-accepter').style.backgroundColor = '#FF4C00';
+
+    // Activer les boutons "Réussi" et "Non Réussi"
+    document.getElementById('btn-reussi').disabled = false;
+    document.getElementById('btn-non-reussi').disabled = false;
+    
+    // Réinitialiser le défi à minuit
+    const minuit = new Date(new Date().setHours(24, 0, 0, 0)).getTime();
+    const timeUntilMidnight = minuit - Date.now();
+
+    setTimeout(() => {
+        localStorage.removeItem('defiDuJourAccepte');
+        localStorage.removeItem('heureAcceptation');
+        document.getElementById('defi-text').innerText = "Clique sur 'Défi du jour' pour commencer !";
+        document.getElementById('btn-defi').disabled = false;
+    }, timeUntilMidnight);
+}
+
+// Fonction pour mettre à jour l'historique
+function mettreAJourHistorique(estReussi) {
+    const defiDuJour = localStorage.getItem('defiDuJourAccepte');
+    const statut = estReussi ? "Réussi" : "Non réussi";
+    
+    // Ajouter le défi à l'historique dans localStorage
+    let historique = JSON.parse(localStorage.getItem('historique')) || [];
+    historique.push({defi: defiDuJour, statut: statut});
+    localStorage.setItem('historique', JSON.stringify(historique));
+
+    // Désactiver les boutons après avoir choisi
+    document.getElementById('btn-reussi').disabled = true;
+    document.getElementById('btn-non-reussi').disabled = true;
+
+    // Afficher un message de confirmation
+    alert(`Défi "${defiDuJour}" marqué comme ${statut}`);
+}
+
+// Fonction pour afficher l'historique
+function afficherHistorique() {
+    const historique = JSON.parse(localStorage.getItem('historique')) || [];
+    let historiqueHtml = "<h3>Historique des Défis</h3>";
+    historique.forEach(item => {
+        historiqueHtml += `<div class="challenge-item"><span>${item.defi}</span><span>${item.statut}</span></div>`;
+    });
+    document.getElementById('defi-container').innerHTML = historiqueHtml;
+}
+    </script>
+
+</body>
+</html>
